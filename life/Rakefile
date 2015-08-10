@@ -1,0 +1,9 @@
+require 'opal'
+require 'opal-jquery'
+require 'opal-browser'
+
+desc "Build our app to life.js"
+task :build do
+  Opal.append_path "app"
+  File.binwrite "life.js", Opal::Builder.build("life").to_s
+end
