@@ -1,5 +1,4 @@
 require 'opal'
-require 'opal-jquery'
 require 'opal-browser'
 
 desc "Build our app to life.js"

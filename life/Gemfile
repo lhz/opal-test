@@ -1,7 +1,6 @@
 source 'http://rubygems.org/'
 
 gem 'opal'
-gem 'opal-jquery'
 gem 'opal-browser'
 
 gem 'guard'
