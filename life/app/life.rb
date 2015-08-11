@@ -48,11 +48,11 @@ class Grid
   end
 
   def width
-    `window.innerWidth` # $window.size.width
+    $window.view.width
   end
   
   def height
-    `window.innerHeight` # $window.size.height
+    $window.view.height
   end
 
   def get_cursor_cell(event)
