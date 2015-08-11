@@ -38,13 +38,13 @@ class Grid
   def fill_cell(cell)
     x = cell.x * CELL_WIDTH;
     y = cell.y * CELL_HEIGHT;
-    canvas.fill_style('#000').fill_rect(x.floor + 1, y.floor + 1, CELL_WIDTH - 1, CELL_HEIGHT - 1)
+    canvas.fill_style('#000').fill_rect(x + 1, y + 1, CELL_WIDTH - 1, CELL_HEIGHT - 1)
   end
  
   def clear_cell(cell)
     x = cell.x * CELL_WIDTH;
     y = cell.y * CELL_HEIGHT;
-    canvas.clear(x.floor + 1, y.floor + 1, CELL_WIDTH - 1, CELL_HEIGHT - 1)
+    canvas.clear(x + 1, y + 1, CELL_WIDTH - 1, CELL_HEIGHT - 1)
   end
 
   def width
