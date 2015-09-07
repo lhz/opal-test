@@ -1,0 +1,7 @@
+source 'http://rubygems.org/'
+
+gem 'opal'
+gem 'opal-browser'
+
+gem 'guard'
+gem 'guard-rake'
