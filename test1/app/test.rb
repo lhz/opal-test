@@ -1,13 +1,13 @@
 require 'opal'
 require 'pp'
 require 'math'
-
-require 'canvas'
-require 'interval'
+require 'browser'
+require 'browser/canvas'
+require 'browser/interval'
 
 class Grid
 
-  NUM_BALLS = 64
+  NUM_BALLS = 512
 
   RADIUS = 12
 
@@ -15,12 +15,12 @@ class Grid
 
   def initialize(canvas_id)
     @canvas_id = canvas_id
-    @sxpos = NUM_BALLS.times.map {|i| i * 0.84 * TAU / NUM_BALLS }
-    @sypos = NUM_BALLS.times.map {|i| i * 0.73 * TAU / NUM_BALLS }
+    @sxpos = NUM_BALLS.times.map {|i| i * 3.54 * TAU / NUM_BALLS }
+    @sypos = NUM_BALLS.times.map {|i| i * 4.23 * TAU / NUM_BALLS }
   end
 
   def run
-    Interval.new(25) { update }
+    every(1.0/60) { update }
   end
 
   def update
@@ -30,14 +30,26 @@ class Grid
   end
 
   def draw
-    canvas.resize(width, height)
-    canvas.stroke_width(2).stroke_style('#465').fill_style('#8CA')
+    clear
+    style.line.width = 2
+    style.stroke = '#465'
+    style.fill   = '#8CA'
+    r = RADIUS
     NUM_BALLS.times do |i|
       x = center_x + radius * Math.cos(@sxpos[i])
       y = center_y + radius * Math.sin(@sypos[i])
-      canvas.fill_circle(x + RADIUS, y + RADIUS, RADIUS)
-      canvas.circle(x + RADIUS, y + RADIUS, RADIUS)
+      circle x + r, y + r, r, filled: true
+      circle x + r, y + r, r
     end
+  end
+
+  def clear
+    canvas.element[:width] = canvas.width # http://jsperf.com/canvasclear
+  end
+
+  def circle(x, y, radius, filled: false)
+    arc = -> { arc x, y, radius, {start: 0, end: 2 * Math::PI} }
+    filled ? canvas.fill(&arc) : canvas.stroke(&arc)
   end
 
   def radius
@@ -55,7 +67,11 @@ class Grid
   private
 
   def canvas
-    @canvas ||= Canvas.new($document[@canvas_id])
+    @canvas ||= Browser::Canvas.new($document[@canvas_id])
+  end
+
+  def style
+    @style ||= canvas.style
   end
 
   def width
