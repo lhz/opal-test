@@ -3,7 +3,7 @@ require 'opal-browser'
 
 desc "Build our app to test.js"
 task :build do
-  Opal.append_path "app"
-  File.binwrite "test.js", Opal::Builder.build("test").to_s
-  # File.binwrite "life.js", Opal.compile(File.read('app/life.rb') + File.read('app/canvas.rb'))
+  Opal.append_path 'app'
+  builder = Opal::Builder.new(prerequired: ['opal', 'browser'])
+  File.binwrite "test.js", builder.build("test").to_s
 end

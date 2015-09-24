@@ -1,11 +1,10 @@
 require 'opal'
-require 'pp'
-require 'math'
 require 'browser'
 require 'browser/canvas'
 require 'browser/interval'
+require 'math'
 
-class Grid
+class Test
 
   NUM_BALLS = 512
 
@@ -22,6 +21,8 @@ class Grid
   def run
     every(1.0/60) { update }
   end
+
+  private
 
   def update
     @sxpos = @sxpos.map { |sp| sp + 0.037 }
@@ -53,7 +54,7 @@ class Grid
   end
 
   def radius
-    @radius ||= ([width, height].min - 2 * RADIUS) / 2
+    @radius ||= ([width, height].min - 2 * RADIUS) / 2 - 2
   end
 
   def center_x
@@ -63,8 +64,6 @@ class Grid
   def center_y
     (height - 2 * RADIUS) / 2
   end
-  
-  private
 
   def canvas
     @canvas ||= Browser::Canvas.new($document[@canvas_id])
@@ -83,5 +82,5 @@ class Grid
   end
 end
  
-grid = Grid.new('canvas')
-grid.run
+test = Test.new('canvas')
+test.run
