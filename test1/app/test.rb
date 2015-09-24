@@ -1,40 +1,50 @@
 require 'opal'
 require 'browser'
 require 'browser/canvas'
+require 'browser/animation_frame'
 require 'browser/interval'
 require 'pp'
 require 'math'
 
 class Test
 
-  NUM_BALLS = 512
-  RADIUS = 12
+  NUM_BALLS = 256
+  BALL_RADIUS = 12
   TAU = 2 * Math::PI
+  DEBUG = true
 
   def initialize(canvas_id)
     @canvas_id = canvas_id
-    @sxpos = NUM_BALLS.times.map {|i| i * 3.54 * TAU / NUM_BALLS }
-    @sypos = NUM_BALLS.times.map {|i| i * 4.23 * TAU / NUM_BALLS }
-    @frame = 0
-    @ftime = 0
+    @sxpos = NUM_BALLS.times.map {|i| i * 1.54 * TAU / NUM_BALLS }
+    @sypos = NUM_BALLS.times.map {|i| i * 2.23 * TAU / NUM_BALLS }
+    @frame_number = 0
+    @frame_time   = 0
   end
 
   def run
-    every(1.0 / 50) {
-      t0 = `performance.now()`
-      update
-      t1 = `performance.now()`
-      @frame += 1
-      pp "Update took #{t1 - t0} ms, frame took #{t0 - @ftime} ms." if @frame % 50 == 0
-      @ftime = t0
-    }
+    animation_frame { animate }
+  rescue NotImplementedError
+    pp "requestAnimationFrame() not available, falling back to setInterval()."
+    every(1.0 / 60) { update }
   end
 
   private
 
+  def animate
+    @frame_number += 1
+    t0 = `performance.now()`
+    update
+    t1 = `performance.now()`
+    if DEBUG && @frame_number % 50 == 0
+      pp "Update took #{'%.3f' % (t1 - t0)} ms, running at #{(50000 / (t0 - @frame_time)).round} fps"
+      @frame_time = t0
+    end
+    animation_frame { animate }
+  end
+  
   def update
-    @sxpos = @sxpos.map { |sp| sp + 0.037 }
-    @sypos = @sypos.map { |sp| sp + 0.059 }
+    @sxpos = @sxpos.map { |sp| sp + 0.047 }
+    @sypos = @sypos.map { |sp| sp + 0.079 }
     draw
   end
 
@@ -43,10 +53,10 @@ class Test
     style.line.width = 2
     style.stroke = '#465'
     style.fill   = '#8CA'
-    r = RADIUS
+    r = BALL_RADIUS
     NUM_BALLS.times do |i|
-      x = center_x + radius * Math.cos(@sxpos[i])
-      y = center_y + radius * Math.sin(@sypos[i])
+      x = center_x + sine_radius * Math.cos(@sxpos[i])
+      y = center_y + sine_radius * Math.sin(@sypos[i])
       circle x + r, y + r, r, filled: true
       circle x + r, y + r, r
     end
@@ -61,16 +71,16 @@ class Test
     filled ? canvas.fill(&arc) : canvas.stroke(&arc)
   end
 
-  def radius
-    @radius ||= ([width, height].min - 2 * RADIUS) / 2 - 2
+  def sine_radius
+    @radius ||= ([width, height].min - 2 * BALL_RADIUS) / 2 - 2
   end
 
   def center_x
-    (width - 2 * RADIUS) / 2
+    (width - 2 * BALL_RADIUS) / 2
   end
   
   def center_y
-    (height - 2 * RADIUS) / 2
+    (height - 2 * BALL_RADIUS) / 2
   end
 
   def canvas
