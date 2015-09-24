@@ -2,24 +2,32 @@ require 'opal'
 require 'browser'
 require 'browser/canvas'
 require 'browser/interval'
+require 'pp'
 require 'math'
 
 class Test
 
   NUM_BALLS = 512
-
   RADIUS = 12
-
   TAU = 2 * Math::PI
 
   def initialize(canvas_id)
     @canvas_id = canvas_id
     @sxpos = NUM_BALLS.times.map {|i| i * 3.54 * TAU / NUM_BALLS }
     @sypos = NUM_BALLS.times.map {|i| i * 4.23 * TAU / NUM_BALLS }
+    @frame = 0
+    @ftime = 0
   end
 
   def run
-    every(1.0/60) { update }
+    every(1.0 / 50) {
+      t0 = `performance.now()`
+      update
+      t1 = `performance.now()`
+      @frame += 1
+      pp "Update took #{t1 - t0} ms, frame took #{t0 - @ftime} ms." if @frame % 50 == 0
+      @ftime = t0
+    }
   end
 
   private
